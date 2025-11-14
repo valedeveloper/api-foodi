@@ -1,0 +1,29 @@
+{
+  "name": "foodi-api",
+  "version": "1.0.0",
+  "description": "About",
+  "keywords": [
+    "foodi",
+    "alimentos",
+    "desperdicio",
+    "donacion"
+  ],
+  "license": "ISC",
+  "author": "Wilson Imbachi - Valeria Jiménez Bedoya",
+  "type": "commonjs",
+  "main": "ra adquirir alimentos próximos a vencer a precios accesibles.",
+  "scripts": {
+    "start": "nodemon app.js",
+    "iniciar": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mysql2": "^3.15.3",
+    "nodemon": "^3.1.11",
+    "sequelize": "^6.37.7"
+  }
+}
