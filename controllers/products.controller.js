@@ -1,5 +1,6 @@
 const { response, request } = require('express');
 const { Products } = require('../models/products.model');
+const { Categories } = require('../models/categories.model');
 
 // ✅ Obtener todos los productos
 const productsGet = async (req, res = response) => {
@@ -30,7 +31,6 @@ const productByIdGet = async (req, res = response) => {
 // ✅ Crear producto
 const productPost = async (req = request, res = response) => {
     //Validar que exista categoria
-
     try {
         const product = await Products.create(req.body);
         res.json({ ok: true, msg: 'Producto creado exitosamente', data: product });
@@ -45,11 +45,19 @@ const productPut = async (req = request, res = response) => {
     //Validar que exista categoria
 
     const { ean_code } = req.params;
-    const { body } = req;
+    const { categories_category_id, body } = req;
     try {
         const product = await Products.findByPk(ean_code);
+
         if (!product) {
             return res.status(404).json({ ok: false, msg: `No existe producto con EAN ${ean_code}` });
+        }
+        const categorie = await Categories.findByPk(categories_category_id)
+        if (!categorie) {
+            return res.status(400).json({
+                ok: false,
+                msg: "La categoria especificada no existen"
+            });
         }
         await product.update(body);
         res.json({ ok: true, msg: 'Producto actualizado correctamente', data: product });

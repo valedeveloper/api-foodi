@@ -1,71 +1,156 @@
-const OrderItem = require('../models/orderItems.model');
+const { response, request } = require("express");
+const { OrderItems } = require("../models/orderItems.model");
+const { Order } = require("../models/orders.model");
+const { ProductBatch } = require("../models/productBatches.model");
 
-const orderItemController = {
-    getAll: (req, res) => {
-        OrderItem.getAll((err, results) => {
-            if (err) {
-                console.error('Error obteniendo order_items:', err);
-                return res.status(500).json({ error: 'Error al obtener los order_items' });
-            }
-            res.json(results);
-        });
-    },
 
-    getById: (req, res) => {
-        const id = req.params.id;
-        OrderItem.getById(id, (err, results) => {
-            if (err) {
-                console.error('Error obteniendo order_item:', err);
-                return res.status(500).json({ error: 'Error al obtener el order_item' });
-            }
-            if (results.length === 0) {
-                return res.status(404).json({ message: 'Order item no encontrado' });
-            }
-            res.json(results[0]);
-        });
-    },
 
-    create: (req, res) => {
-        const data = req.body;
-        if (!data.orders_order_id || !data.product_batches_batch_id || !data.quantity || !data.unit_price) {
-            return res.status(400).json({ error: 'Faltan campos obligatorios' });
-        }
-
-        data.subtotal = data.quantity * data.unit_price;
-
-        OrderItem.create(data, (err, result) => {
-            if (err) {
-                console.error('Error creando order_item:', err);
-                return res.status(500).json({ error: 'Error al crear el order_item' });
-            }
-            res.status(201).json({ message: 'Order item creado correctamente', orderitem_id: result.insertId });
-        });
-    },
-
-    update: (req, res) => {
-        const id = req.params.id;
-        const data = req.body;
-        data.subtotal = data.quantity * data.unit_price;
-
-        OrderItem.update(id, data, (err) => {
-            if (err) {
-                console.error('Error actualizando order_item:', err);
-                return res.status(500).json({ error: 'Error al actualizar el order_item' });
-            }
-            res.json({ message: 'Order item actualizado correctamente' });
-        });
-    },
-
-    delete: (req, res) => {
-        const id = req.params.id;
-        OrderItem.delete(id, (err) => {
-            if (err) {
-                console.error('Error eliminando order_item:', err);
-                return res.status(500).json({ error: 'Error al eliminar el order_item' });
-            }
-            res.json({ message: 'Order item eliminado correctamente' });
-        });
+// GET ALL
+const orderItemsGet = async (req, res = response) => {
+    try {
+        const items = await OrderItems.findAll();
+        res.json({ ok: true, data: items });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ ok: false, msg: "Error al obtener order_items", error });
     }
 };
 
-module.exports = orderItemController;
+
+// GET BY ID
+const orderItemsGetById = async (req, res = response) => {
+    const { id } = req.params;
+
+    try {
+        const item = await OrderItems.findByPk(id);
+
+        if (!item) {
+            return res.status(404).json({
+                ok: false,
+                msg: `No existe order_item con id ${id}`
+            });
+        }
+
+        res.json({ ok: true, data: item });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ ok: false, msg: "Error interno", error });
+    }
+};
+
+
+// POST
+const orderItemsPost = async (req, res = response) => {
+    const { orders_order_id, product_batches_batch_id, quantity, unit_price, subtotal } = req.body;
+
+    console.log("El product_batches_batch_id", product_batches_batch_id)
+    console.log("El orders_order_id", orders_order_id)
+    try {
+        // Validaciones de existencia
+
+
+        const order = await Order.findByPk(orders_order_id);
+        const batch = await ProductBatch.findByPk(product_batches_batch_id);
+
+        if (!order || !batch) {
+            return res.status(400).json({
+                ok: false,
+                msg: "La orden o el batch especificado no existen"
+            });
+        }
+
+        const newItem = await OrderItems.create({
+            orders_order_id,
+            product_batches_batch_id,
+            quantity,
+            unit_price,
+            subtotal
+        });
+
+        res.status(201).json({
+            ok: true,
+            msg: "OrderItem creado correctamente",
+            data: newItem
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ ok: false, msg: "Error interno", error });
+    }
+};
+
+
+// PUT
+const orderItemsPut = async (req, res = response) => {
+    const { id } = req.params;
+    const { orders_order_id, product_batches_batch_id, quantity, unit_price, subtotal } = req.body;
+
+    try {
+        const item = await OrderItems.findByPk(id);
+
+        if (!item) {
+            return res.status(404).json({
+                ok: false,
+                msg: `No existe order_item con id ${id}`
+            });
+        }
+
+        const order = await Orders.findByPk(orders_order_id);
+        const batch = await ProductBatches.findByPk(product_batches_batch_id);
+
+        if (!order || !batch) {
+            return res.status(400).json({
+                ok: false,
+                msg: "La orden o el batch especificado no existen"
+            });
+        }
+
+        await item.update({
+            orders_order_id,
+            product_batches_batch_id,
+            quantity,
+            unit_price,
+            subtotal
+        });
+
+        res.json({ ok: true, msg: "OrderItem actualizado", data: item });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ ok: false, msg: "Error interno", error });
+    }
+};
+
+
+// DELETE
+const orderItemsDelete = async (req, res = response) => {
+    const { id } = req.params;
+
+    try {
+        const item = await OrderItems.findByPk(id);
+
+        if (!item) {
+            return res.status(404).json({
+                ok: false,
+                msg: `No existe order_item con id ${id}`
+            });
+        }
+
+        await item.destroy();
+
+        res.json({ ok: true, msg: "OrderItem eliminado", data: item });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ ok: false, msg: "Error interno", error });
+    }
+};
+
+
+module.exports = {
+    orderItemsGet,
+    orderItemsGetById,
+    orderItemsPost,
+    orderItemsPut,
+    orderItemsDelete
+};

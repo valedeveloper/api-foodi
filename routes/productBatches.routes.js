@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 const {
     createBatch,
     getAllBatches,
@@ -7,11 +6,19 @@ const {
     updateBatch,
     deleteBatch
 } = require('../controllers/productBatches.controller');
-
-router.post('/', createBatch);
+const { validarFKBatch } = require('../middlewares/validacionesFK');
+const { validarCampos } = require("../middlewares/validar-campos")
+const router = express.Router();
 router.get('/', getAllBatches);
 router.get('/:id', getBatchById);
-router.put('/:id', updateBatch);
+router.post('/',
+    validarCampos,
+    validarFKBatch,
+    createBatch);
+router.put('/:id',
+    validarCampos,
+    validarFKBatch,
+    updateBatch);
 router.delete('/:id', deleteBatch);
 
 module.exports = router;

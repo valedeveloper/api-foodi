@@ -1,17 +1,18 @@
-const ProductBatch = require('../models/productBatches.model');
+const { ProductBatch } = require('../models/productBatches.model');
 
 // Crear nuevo batch
-exports.createBatch = async (req, res) => {
+const createBatch = async (req, res) => {
     try {
         const newBatch = await ProductBatch.create(req.body);
         res.status(201).json(newBatch);
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: 'Error creando el lote', error });
     }
 };
 
 // Obtener todos los batches
-exports.getAllBatches = async (req, res) => {
+const getAllBatches = async (req, res) => {
     try {
         const batches = await ProductBatch.findAll();
         res.status(200).json(batches);
@@ -21,7 +22,7 @@ exports.getAllBatches = async (req, res) => {
 };
 
 // Obtener un batch por ID
-exports.getBatchById = async (req, res) => {
+const getBatchById = async (req, res) => {
     try {
         const { id } = req.params;
         const batch = await ProductBatch.findByPk(id);
@@ -33,7 +34,7 @@ exports.getBatchById = async (req, res) => {
 };
 
 // Actualizar un batch
-exports.updateBatch = async (req, res) => {
+const updateBatch = async (req, res) => {
     try {
         const { id } = req.params;
         const [updated] = await ProductBatch.update(req.body, { where: { batch_id: id } });
@@ -45,7 +46,7 @@ exports.updateBatch = async (req, res) => {
 };
 
 // Eliminar un batch
-exports.deleteBatch = async (req, res) => {
+const deleteBatch = async (req, res) => {
     try {
         const { id } = req.params;
         const deleted = await ProductBatch.destroy({ where: { batch_id: id } });
@@ -55,3 +56,8 @@ exports.deleteBatch = async (req, res) => {
         res.status(500).json({ message: 'Error eliminando el lote', error });
     }
 };
+
+module.exports = {
+    deleteBatch,
+    updateBatch, createBatch, getAllBatches, getBatchById
+}

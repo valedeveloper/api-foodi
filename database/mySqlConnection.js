@@ -3,10 +3,10 @@ const { Sequelize } = require('sequelize');
 const bdmysql = new Sequelize(
     'foodi_app',
     'root',
-    '',
+    '1234',
     {
         host: 'localhost',
-        port: '3307',
+        port: '3306',
         dialect: 'mysql'
     }
 );

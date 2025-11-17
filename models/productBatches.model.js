@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
-const { bdmysql } = require('../database/mySqlConnection')
-const { Store } = require('./stores.model');
+const { bdmysql } = require('../database/mySqlConnection');
 
 const ProductBatch = bdmysql.define('product_batches', {
     batch_id: {
@@ -16,32 +15,20 @@ const ProductBatch = bdmysql.define('product_batches', {
             key: 'ean_code'
         }
     },
-    remaining_quantity: {
-        type: DataTypes.BIGINT
-    },
-    expiration_date: {
-        type: DataTypes.DATE
-    },
-    manufacture_date: {
-        type: DataTypes.DATE
-    },
+    remaining_quantity: DataTypes.BIGINT,
+    expiration_date: DataTypes.DATE,
+    manufacture_date: DataTypes.DATE,
     original_price: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    discount_price: {
-        type: DataTypes.DECIMAL(10, 2)
-    },
+    discount_price: DataTypes.DECIMAL(10, 2),
     status: {
-        type: DataTypes.ENUM('available', 'expired', 'sold_out'),
-        defaultValue: 'available'
+        type: DataTypes.ENUM("available", "expired", "sold_out"),
+        defaultValue: "available"
     },
-    photograph_url: {
-        type: DataTypes.STRING(255)
-    },
-    notes: {
-        type: DataTypes.TEXT
-    },
+    photograph_url: DataTypes.STRING(255),
+    notes: DataTypes.TEXT,
     discount_applied: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
@@ -50,16 +37,14 @@ const ProductBatch = bdmysql.define('product_batches', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'stores',
-            key: 'store_id'
+            model: "stores",
+            key: "store_id"
         }
     },
-    quantity: {
-        type: DataTypes.BIGINT
-    }
+    quantity: DataTypes.BIGINT
 }, {
     tableName: 'product_batches',
     timestamps: false
 });
 
-module.exports = ProductBatch;
+module.exports = { ProductBatch };
