@@ -4,7 +4,8 @@ const {
     foodBankGetById,
     foodBankPost,
     foodBankPut,
-    foodBankDelete
+    foodBankDelete,
+    getDonationsByFoodBank
 } = require('../controllers/foodBanks.controller');
 
 const router = Router();
@@ -14,5 +15,7 @@ router.get('/:id', foodBankGetById);
 router.post('/', foodBankPost);
 router.put('/:id', foodBankPut);
 router.delete('/:id', foodBankDelete);
+router.get("/analytics/by-foodbank", getDonationsByFoodBank);
+
 
 module.exports = router;

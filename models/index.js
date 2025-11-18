@@ -1,15 +1,15 @@
 const { Categories } = require("./categories.model")
 const { Products } = require("./products.model")
 const { Stores } = require("./stores.model")
-const { ProductBatches } = require("./productBatches.model")
+const { ProductBatch } = require("./productBatches.model")
 const { Customers } = require("./customers.model")
-const { Orders } = require("./orders.model")
+const { Order } = require("./orders.model")
 
 module.exports = {
     Categories,
     Stores,
     Products,
-    ProductBatches,
+    ProductBatch,
     Customers,
-    Orders,
+    Order,
 }

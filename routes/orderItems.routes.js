@@ -7,17 +7,16 @@ const {
     orderItemsPut,
     orderItemsDelete
 } = require('../controllers/orderItems.controller.js');
-const { validarCampos } = require("../middlewares/validar-campos.js")
-const { validarFKOrderItems } = require("../middlewares/validacionesFK.js")
+const { validarFKOrderItems, validarStockSuficiente } = require("../middlewares/validacionesFK.js")
 router.get('/', orderItemsGet);
 router.get('/:id', orderItemsGetById);
 router.post('/',
-    validarCampos,
     validarFKOrderItems,
+    validarStockSuficiente,
     orderItemsPost);
 router.put('/:id',
-    validarCampos,
     validarFKOrderItems,
+    validarStockSuficiente,
     orderItemsPut);
 router.delete('/:id', orderItemsDelete);
 

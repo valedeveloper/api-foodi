@@ -1,6 +1,7 @@
 const { response, request } = require('express');
 const { Products } = require('../models/products.model');
 const { Categories } = require('../models/categories.model');
+const { bdmysql } = require('../database/mySqlConnection');
 
 // ✅ Obtener todos los productos
 const productsGet = async (req, res = response) => {
@@ -82,11 +83,33 @@ const productDelete = async (req = request, res = response) => {
         res.status(500).json({ ok: false, msg: 'Error al eliminar producto', error });
     }
 };
+const getProductsSeller = async (req = request, res = response) => {
+    try {
+        const [rows] = await bdmysql.query(`SELECT p.name, SUM(oi.quantity) AS total_vendido
+            FROM order_items oi
+            JOIN product_batches pb ON pb.batch_id = oi.product_batches_batch_id
+            JOIN products p ON p.ean_code = pb.products_ean_code
+            GROUP BY p.ean_code
+            ORDER BY total_vendido DESC
+            LIMIT 10`)
+
+        res.json(rows)
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: "Error obteniendo el productor"
+        })
+    }
+
+}
+
 
 module.exports = {
     productsGet,
     productByIdGet,
     productPost,
     productPut,
-    productDelete
+    productDelete,
+    getProductsSeller
 };

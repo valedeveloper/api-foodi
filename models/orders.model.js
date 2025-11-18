@@ -9,7 +9,11 @@ const Order = bdmysql.define('orders', {
     },
     customers_customer_id: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: "customers",
+            key: "customer_id"
+        }
     },
     total_price: DataTypes.DECIMAL(12, 2),
     donated_amount: DataTypes.DECIMAL(12, 2),

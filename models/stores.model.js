@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { bdmysql } = require('../database/mySqlConnection')
 
-const Store = bdmysql.define(
+const Stores = bdmysql.define(
     "stores",
     {
         store_id: {
@@ -65,4 +65,4 @@ const Store = bdmysql.define(
     }
 );
 
-module.exports = Store;
+module.exports = { Stores };

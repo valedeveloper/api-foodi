@@ -47,18 +47,6 @@ const orderItemsPost = async (req, res = response) => {
     console.log("El orders_order_id", orders_order_id)
     try {
         // Validaciones de existencia
-
-
-        const order = await Order.findByPk(orders_order_id);
-        const batch = await ProductBatch.findByPk(product_batches_batch_id);
-
-        if (!order || !batch) {
-            return res.status(400).json({
-                ok: false,
-                msg: "La orden o el batch especificado no existen"
-            });
-        }
-
         const newItem = await OrderItems.create({
             orders_order_id,
             product_batches_batch_id,

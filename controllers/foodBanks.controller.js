@@ -1,5 +1,6 @@
 const { response } = require('express');
 const { FoodBanks } = require('../models/foodBanks.model');
+const { bdmysql } = require('../database/mySqlConnection');
 
 // Obtener todos los bancos de alimentos
 const foodBanksGet = async (req, res = response) => {
@@ -66,11 +67,30 @@ const foodBankDelete = async (req, res = response) => {
         res.status(500).json({ ok: false, msg: 'Error al eliminar el banco de alimentos', error });
     }
 };
+// Total donado por food bank
+const getDonationsByFoodBank = async (req, res) => {
+    try {
+        const [rows] = await bdmysql.query(`
+            SELECT 
+                fb.name AS foodbank,
+                SUM(d.donation_amount) AS total_donado
+            FROM donations d
+            JOIN food_banks fb ON fb.foodbank_id = d.food_banks_foodbank_id
+            GROUP BY fb.foodbank_id;
+        `);
 
+        res.json(rows);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error obteniendo donaciones por banco de alimentos" });
+    }
+};
 module.exports = {
     foodBanksGet,
     foodBankGetById,
     foodBankPost,
     foodBankPut,
-    foodBankDelete
+    foodBankDelete,
+    getDonationsByFoodBank
 };

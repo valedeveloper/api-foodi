@@ -1,5 +1,6 @@
 const { response } = require('express');
 const { Donations } = require('../models/donations.model');
+const { bdmysql } = require('../database/mySqlConnection');
 
 // Obtener todas las donaciones
 const donationsGet = async (req, res = response) => {
@@ -81,11 +82,30 @@ const donationDelete = async (req, res = response) => {
         res.status(500).json({ ok: false, msg: 'Error al eliminar donación', error });
     }
 };
+// Total donado por mes
+const getDonationsByMonth = async (req, res) => {
+    try {
+        const [rows] = await bdmysql.query(`
+            SELECT 
+                DATE_FORMAT(donation_date, '%Y-%m') AS mes,
+                SUM(donation_amount) AS total_donado
+            FROM donations
+            GROUP BY mes
+            ORDER BY mes DESC;
+        `);
 
+        res.json(rows);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error obteniendo donaciones por mes" });
+    }
+};
 module.exports = {
     donationsGet,
     donationGetById,
     donationPost,
     donationPut,
-    donationDelete
+    donationDelete,
+    getDonationsByMonth
 };

@@ -15,7 +15,10 @@ const ProductBatch = bdmysql.define('product_batches', {
             key: 'ean_code'
         }
     },
-    remaining_quantity: DataTypes.BIGINT,
+    remaining_quantity: {
+        type: DataTypes.BIGINT,
+        allowNull: true
+    },
     expiration_date: DataTypes.DATE,
     manufacture_date: DataTypes.DATE,
     original_price: {
@@ -31,7 +34,6 @@ const ProductBatch = bdmysql.define('product_batches', {
     notes: DataTypes.TEXT,
     discount_applied: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
     },
     stores_store_id: {
         type: DataTypes.INTEGER,
@@ -44,7 +46,15 @@ const ProductBatch = bdmysql.define('product_batches', {
     quantity: DataTypes.BIGINT
 }, {
     tableName: 'product_batches',
-    timestamps: false
+    timestamps: false,
+
+    hooks: {
+        beforeCreate: (batch) => {
+            if (batch.remaining_quantity == null) {
+                batch.remaining_quantity = batch.quantity;
+            }
+        }
+    }
 });
 
 module.exports = { ProductBatch };

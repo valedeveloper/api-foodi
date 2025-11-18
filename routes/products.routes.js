@@ -4,7 +4,8 @@ const {
     productByIdGet,
     productPost,
     productPut,
-    productDelete
+    productDelete,
+    getProductsSeller
 } = require('../controllers/products.controller');
 const { validarFKProducto } = require('../middlewares/validacionesFK');
 const { validarCampos } = require('../middlewares/validar-campos');
@@ -23,5 +24,6 @@ router.put('/:ean_code',
     validarFKProducto,
     productPut);
 router.delete('/:ean_code', productDelete);
+router.get('/analytics/best-seller', getProductsSeller)
 
 module.exports = router;

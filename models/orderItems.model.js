@@ -43,7 +43,18 @@ const OrderItems = bdmysql.define("order_items", {
     }
 }, {
     freezeTableName: true,
-    timestamps: false
-});
+    timestamps: false,
+
+    hooks: {
+        beforeCreate: (item) => {
+            item.subtotal = Number((item.quantity * item.unit_price).toFixed(2));
+        },
+        beforeUpdate: (item) => {
+            item.subtotal = Number((item.quantity * item.unit_price).toFixed(2));
+        }
+    }
+}
+
+);
 
 module.exports = { OrderItems };

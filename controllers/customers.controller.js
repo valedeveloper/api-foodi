@@ -74,6 +74,9 @@ const customerPut = async (req, res = response) => {
         const customer = await Customers.findByPk(id)
         if (!customer) return res.status(404).json({ ok: false, msg: 'Cliente no encontrado' })
 
+        const exists = await Customers.findOne({ where: { cedula } });
+        if (exists) return res.status(400).json({ ok: false, msg: 'La cédula ya está registrado' });
+
         await customer.update({ name, email, password, phone, location_lat, location_lng })
         res.json({
             ok: true,
